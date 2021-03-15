@@ -1,0 +1,9 @@
+linters:
+  enable:
+    - goimports
+    - staticcheck
+    - structcheck
+    - stylecheck
+linters-settings:
+  goimports:
+    local-prefixes: github.com/snowhork/rdiam
