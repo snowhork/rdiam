@@ -4,10 +4,11 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/snowhork/rdiam/cmd/impl"
-	"github.com/snowhork/rdiam/pkg/redash"
 	"github.com/spf13/cobra"
 	"golang.org/x/xerrors"
+
+	"github.com/snowhork/rdiam/cmd/impl"
+	"github.com/snowhork/rdiam/pkg/redash"
 )
 
 func init() {

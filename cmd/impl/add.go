@@ -58,7 +58,7 @@ func AddCmd(client addRedashClient, users, groups []string) error {
 type addRedashClient interface {
 	SearchUser(q string) ([]byte, error)
 	GetGroups() ([]byte, error)
-	AddMember(groupId, userId int) ([]byte, error)
+	AddMember(groupID, userID int) ([]byte, error)
 }
 
 func findGroupID(client addRedashClient, groupName string) (int, error) {
@@ -68,7 +68,7 @@ func findGroupID(client addRedashClient, groupName string) (int, error) {
 	}
 
 	var resp []struct {
-		Id   int    `json:"id"`
+		ID   int    `json:"id"`
 		Name string `json:"name"`
 	}
 	if err := json.Unmarshal(raw, &resp); err != nil {
@@ -77,7 +77,7 @@ func findGroupID(client addRedashClient, groupName string) (int, error) {
 
 	for _, g := range resp {
 		if g.Name == groupName {
-			return g.Id, nil
+			return g.ID, nil
 		}
 	}
 
@@ -92,7 +92,7 @@ func findUserID(client addRedashClient, userEmail string) (int, error) {
 
 	var resp struct {
 		Results []struct {
-			Id    int    `json:"id"`
+			ID    int    `json:"id"`
 			Email string `json:"email"`
 		} `json:"results"`
 	}
@@ -109,5 +109,5 @@ func findUserID(client addRedashClient, userEmail string) (int, error) {
 		return -1, xerrors.Errorf("user: %s not found", userEmail)
 	}
 
-	return user.Id, nil
+	return user.ID, nil
 }
