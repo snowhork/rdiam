@@ -72,6 +72,27 @@ func (c *client) GetGroups() ([]byte, error) {
 	return c.get(fmt.Sprintf("%s/api/groups?%s", c.endpoint, val.Encode()))
 }
 
+func (c *client) GetDataSource(id int) ([]byte, error) {
+	val := url.Values{}
+	val.Add("api_key", c.apiKey)
+
+	return c.get(fmt.Sprintf("%s/api/data_sources/%d?%s", c.endpoint, id, val.Encode()))
+}
+
+func (c *client) GetQuery(id int) ([]byte, error) {
+	val := url.Values{}
+	val.Add("api_key", c.apiKey)
+
+	return c.get(fmt.Sprintf("%s/api/queries/%d?%s", c.endpoint, id, val.Encode()))
+}
+
+func (c *client) GetDashboard(id string) ([]byte, error) {
+	val := url.Values{}
+	val.Add("api_key", c.apiKey)
+
+	return c.get(fmt.Sprintf("%s/api/dashboards/%s?%s", c.endpoint, id, val.Encode()))
+}
+
 func (c *client) AddMember(groupId, userId int) ([]byte, error) {
 	val := url.Values{}
 	val.Add("api_key", c.apiKey)
