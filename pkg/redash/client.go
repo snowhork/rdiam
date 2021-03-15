@@ -93,19 +93,19 @@ func (c *client) GetDashboard(id string) ([]byte, error) {
 	return c.get(fmt.Sprintf("%s/api/dashboards/%s?%s", c.endpoint, id, val.Encode()))
 }
 
-func (c *client) AddMember(groupId, userId int) ([]byte, error) {
+func (c *client) AddMember(groupID, userID int) ([]byte, error) {
 	val := url.Values{}
 	val.Add("api_key", c.apiKey)
 
 	body := struct {
-		UserId int `json:"user_id"`
-	}{UserId: userId}
+		UserID int `json:"user_id"`
+	}{UserID: userID}
 
 	raw, err := json.Marshal(body)
 	if err != nil {
 		return nil, xerrors.Errorf("json.Marshal: %+w", err)
 	}
 
-	return c.post(fmt.Sprintf("%s/api/groups/%d/members?%s", c.endpoint, groupId, val.Encode()), bytes.NewBuffer(raw))
+	return c.post(fmt.Sprintf("%s/api/groups/%d/members?%s", c.endpoint, groupID, val.Encode()), bytes.NewBuffer(raw))
 
 }

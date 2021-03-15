@@ -95,15 +95,15 @@ func getDataSourceIDByQuery(client inspectRedashClient, queryID int) (int, error
 	}
 
 	var resp struct {
-		Id           int    `json:"id"`
+		ID           int    `json:"id"`
 		Name         string `json:"name"`
-		DataSourceId int    `json:"data_source_id"`
+		DataSourceID int    `json:"data_source_id"`
 	}
 	if err := json.Unmarshal(raw, &resp); err != nil {
 		return 0, xerrors.Errorf("json.Unmarshal: %+w", err)
 	}
 
-	return resp.DataSourceId, nil
+	return resp.DataSourceID, nil
 }
 
 func getGroupIDsByDataSource(client inspectRedashClient, dataSourceID int, acceptReadOnly bool) ([]int, error) {
@@ -144,7 +144,7 @@ func getGroupIDToName(client inspectRedashClient) (map[int]string, error) {
 		return nil, xerrors.Errorf("client.GetGroups: %+w", err)
 	}
 	var resp []struct {
-		Id   int    `json:"id"`
+		ID   int    `json:"id"`
 		Name string `json:"name"`
 	}
 	if err := json.Unmarshal(raw, &resp); err != nil {
@@ -153,7 +153,7 @@ func getGroupIDToName(client inspectRedashClient) (map[int]string, error) {
 
 	res := make(map[int]string)
 	for _, g := range resp {
-		res[g.Id] = g.Name
+		res[g.ID] = g.Name
 	}
 
 	return res, nil
@@ -169,7 +169,7 @@ func getQueryIDsByDashboard(client inspectRedashClient, dashboardSlug string) ([
 		Widgets []struct {
 			Visualization *struct {
 				Query struct {
-					Id int `json:"id"`
+					ID int `json:"id"`
 				} `json:"query"`
 			} `json:"visualization"`
 		} `json:"widgets"`
@@ -185,7 +185,7 @@ func getQueryIDsByDashboard(client inspectRedashClient, dashboardSlug string) ([
 			continue
 		}
 
-		ids = append(ids, w.Visualization.Query.Id)
+		ids = append(ids, w.Visualization.Query.ID)
 	}
 
 	return ids, nil
@@ -216,7 +216,7 @@ func explainQuery(client inspectRedashClient, queryID int, indent int) error {
 	}
 
 	var resp struct {
-		Id   int    `json:"id"`
+		ID   int    `json:"id"`
 		Name string `json:"name"`
 	}
 	if err := json.Unmarshal(raw, &resp); err != nil {
@@ -234,7 +234,7 @@ func explainDataSource(client inspectRedashClient, dataSourceID int, indent int)
 		return xerrors.Errorf("client.GetDataSource: %+w", err)
 	}
 	var resp struct {
-		Id   int    `json:"id"`
+		ID   int    `json:"id"`
 		Name string `json:"name"`
 	}
 	if err := json.Unmarshal(raw, &resp); err != nil {
