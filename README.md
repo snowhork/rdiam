@@ -1,18 +1,38 @@
-# rdiam(alpha version)
+# rdiam(beta version)
 `rdiam` is CLI for redash group members, inspired by [bqiam](https://github.com/hirosassa/bqiam).
-This is alpha version.
+This is beta version.
 
-## install
+## Install
 ```
 go get -u github.com/snowhork/rdiam
 ```
 
-## usage
-You can get user API KEY at `<your redash domain>/users/me`.
+## Required
+Redash version >= 7.0.0
+
+`rdiam` uses Redash internal API. With another version, `rdiam` may not work.
+
+## Usage
+### Setting
+In the beginning, you can interactively set your redash endpoint and your redash user API key as below.
 
 ```
-REDASH_ENDPOINT="your redash domain" REDASH_API_KEY="your user api key" \
+Enter you Redash endpoint (e.g. https://redash.yourdomain.com): 
+Enter your Redash user API Key: 
+```
+You can get user API KEY at `<your redash domain>/users/me`.
+
+Your settings are written at `~/.rdiam.yaml`.
+
+### Example
+```
 rdiam add -u user1@email.com,user2@emali.com -g group1,group2
 ```
 
-In the future version, the endpoint and api_key may be managed by setting file.
+TODO: write explanation. (Sorry)
+
+
+```
+rdiam inspect query 1234
+```
+
