@@ -1,4 +1,8 @@
 # rdiam(beta version)
+
+[![Test](https://github.com/snowhork/rdiam/actions/workflows/test.yml/badge.svg)](https://github.com/snowhork/rdiam/actions/workflows/test.yml)
+[![Apache-2.0](https://img.shields.io/github/license/snowhork/rdiam)](LICENSE)
+
 `rdiam` is CLI for redash group members, inspired by [bqiam](https://github.com/hirosassa/bqiam).
 This is beta version.
 
@@ -31,8 +35,6 @@ rdiam add -u user1@email.com,user2@emali.com -g group1,group2
 
 TODO: write explanation. (Sorry)
 
-
 ```
 rdiam inspect query 1234
 ```
-
