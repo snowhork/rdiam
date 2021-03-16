@@ -25,11 +25,11 @@ type responseSearchUser struct {
 func requestSearchUser(client redashClient, q string) (resp responseSearchUser, err error) {
 	raw, err := client.SearchUser(q)
 	if err != nil {
-		return resp, xerrors.Errorf("%+w", err)
+		return resp, xerrors.Errorf("client.SearchUse: %+w", err)
 	}
 
 	if err := json.Unmarshal(raw, &resp); err != nil {
-		return resp, xerrors.Errorf("%+w", err)
+		return resp, xerrors.Errorf("json.Unmarshal: %+w", err)
 	}
 
 	return resp, nil
@@ -43,11 +43,11 @@ type responseGetGroups []struct {
 func requestGetGroups(client redashClient) (resp responseGetGroups, err error) {
 	raw, err := client.GetGroups()
 	if err != nil {
-		return resp, xerrors.Errorf("%+w", err)
+		return resp, xerrors.Errorf("client.SearchUse: %+w", err)
 	}
 
 	if err := json.Unmarshal(raw, &resp); err != nil {
-		return resp, xerrors.Errorf("%+w", err)
+		return resp, xerrors.Errorf("json.Unmarshal: %+w", err)
 	}
 
 	return resp, nil
@@ -62,11 +62,11 @@ type responseGetQuery struct {
 func requestGetQuery(client redashClient, id int) (resp responseGetQuery, err error) {
 	raw, err := client.GetQuery(id)
 	if err != nil {
-		return resp, xerrors.Errorf("%+w", err)
+		return resp, xerrors.Errorf("client.SearchUse: %+w", err)
 	}
 
 	if err := json.Unmarshal(raw, &resp); err != nil {
-		return resp, xerrors.Errorf("%+w", err)
+		return resp, xerrors.Errorf("json.Unmarshal: %+w", err)
 	}
 
 	return resp, nil
@@ -81,11 +81,11 @@ type responseGetDataSource struct {
 func requestGetDataSource(client redashClient, id int) (resp responseGetDataSource, err error) {
 	raw, err := client.GetDataSource(id)
 	if err != nil {
-		return resp, xerrors.Errorf("%+w", err)
+		return resp, xerrors.Errorf("client.SearchUse: %+w", err)
 	}
 
 	if err := json.Unmarshal(raw, &resp); err != nil {
-		return resp, xerrors.Errorf("%+w", err)
+		return resp, xerrors.Errorf("json.Unmarshal: %+w", err)
 	}
 
 	return resp, nil
@@ -106,11 +106,11 @@ type responseGetDashboard struct {
 func requestGetDashboard(client redashClient, slug string) (resp responseGetDashboard, err error) {
 	raw, err := client.GetDashboard(slug)
 	if err != nil {
-		return resp, xerrors.Errorf("%+w", err)
+		return resp, xerrors.Errorf("client.SearchUse: %+w", err)
 	}
 
 	if err := json.Unmarshal(raw, &resp); err != nil {
-		return resp, xerrors.Errorf("%+w", err)
+		return resp, xerrors.Errorf("json.Unmarshal: %+w", err)
 	}
 
 	return resp, nil

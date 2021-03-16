@@ -22,11 +22,15 @@ func AddCmd(client redashClient, users, groups []string) error {
 		return nil
 	}
 
+	return addCmd(client, users, groups)
+}
+
+func addCmd(client redashClient, users, groups []string) error {
 	groupIds := make([]int, len(groups))
 	for i, g := range groups {
 		id, err := findGroupID(client, g)
 		if err != nil {
-			return xerrors.Errorf("%+w", err)
+			return xerrors.Errorf("findGroupID: %+w", err)
 		}
 		groupIds[i] = id
 	}
@@ -35,7 +39,7 @@ func AddCmd(client redashClient, users, groups []string) error {
 	for i, u := range users {
 		id, err := findUserID(client, u)
 		if err != nil {
-			return xerrors.Errorf("%+w", err)
+			return xerrors.Errorf("findUserID: %+w", err)
 		}
 		userIds[i] = id
 	}
