@@ -8,11 +8,12 @@ This is beta version.
 
 ## Install
 ```
-go get -u github.com/snowhork/rdiam
+go install github.com/snowhork/rdiam
 ```
 
 ## Requirement
-Redash version >= 7.0.0
+* go >= 1.16.0
+* Redash version >= 7.0.0
 
 `rdiam` uses Redash internal API. With another version, `rdiam` may not work.
 
