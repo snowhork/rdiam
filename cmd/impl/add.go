@@ -2,7 +2,6 @@ package impl
 
 import (
 	"bufio"
-	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
@@ -10,7 +9,7 @@ import (
 	"golang.org/x/xerrors"
 )
 
-func AddCmd(client addRedashClient, users, groups []string) error {
+func AddCmd(client redashClient, users, groups []string) error {
 	fmt.Printf("users:   %s\n", users)
 	fmt.Printf("groups:  %s\n", groups)
 	fmt.Printf("Are you sure? [y/n]")
@@ -55,24 +54,10 @@ func AddCmd(client addRedashClient, users, groups []string) error {
 	return nil
 }
 
-type addRedashClient interface {
-	SearchUser(q string) ([]byte, error)
-	GetGroups() ([]byte, error)
-	AddMember(groupID, userID int) ([]byte, error)
-}
-
-func findGroupID(client addRedashClient, groupName string) (int, error) {
-	raw, err := client.GetGroups()
+func findGroupID(client redashClient, groupName string) (int, error) {
+	resp, err := requestGetGroups(client)
 	if err != nil {
-		return -1, err
-	}
-
-	var resp []struct {
-		ID   int    `json:"id"`
-		Name string `json:"name"`
-	}
-	if err := json.Unmarshal(raw, &resp); err != nil {
-		return -1, err
+		return -1, xerrors.Errorf("requestGetGroups: %+w", err)
 	}
 
 	for _, g := range resp {
@@ -84,20 +69,10 @@ func findGroupID(client addRedashClient, groupName string) (int, error) {
 	return -1, xerrors.Errorf("group: %s not found", groupName)
 }
 
-func findUserID(client addRedashClient, userEmail string) (int, error) {
-	raw, err := client.SearchUser(userEmail)
+func findUserID(client redashClient, userEmail string) (int, error) {
+	resp, err := requestSearchUser(client, userEmail)
 	if err != nil {
-		return -1, err
-	}
-
-	var resp struct {
-		Results []struct {
-			ID    int    `json:"id"`
-			Email string `json:"email"`
-		} `json:"results"`
-	}
-	if err := json.Unmarshal(raw, &resp); err != nil {
-		return -1, err
+		return -1, xerrors.Errorf("requestSearchUser: %+w", err)
 	}
 
 	if len(resp.Results) == 0 {
