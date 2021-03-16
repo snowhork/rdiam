@@ -11,14 +11,14 @@ This is beta version.
 go get -u github.com/snowhork/rdiam
 ```
 
-## Required
+## Requirement
 Redash version >= 7.0.0
 
 `rdiam` uses Redash internal API. With another version, `rdiam` may not work.
 
 ## Usage
 ### Setting
-In the beginning, you can interactively set your redash endpoint and your redash user API key as below.
+In first, you can interactively set your redash endpoint and your redash user API key as below.
 
 ```
 Enter you Redash endpoint (e.g. https://redash.yourdomain.com): 

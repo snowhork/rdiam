@@ -100,17 +100,16 @@ func initConfig() {
 		}
 
 		fmt.Println("Failed to use config file:", viper.ConfigFileUsed())
-
 	}
 
-	fmt.Printf("Enter you Redash endpoint (e.g. https://redash.yourdomain.com): ")
+	fmt.Print("Enter you Redash endpoint (e.g. https://redash.yourdomain.com): ")
 	redashEndpoint, err := enterValue()
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	fmt.Printf("Enter your Redash user API Key: ")
+	fmt.Printf("Enter your Redash user API Key (available at %s/users/me): ", redashEndpoint)
 	redashUserAPIKey, err := enterValue()
 	if err != nil {
 		panic(err)
@@ -124,9 +123,15 @@ func initConfig() {
 		}
 	}
 
+	if err := viper.ReadInConfig(); err != nil {
+		panic(err)
+	}
+
 	if err := setGlobalConfigFromViper(); err != nil {
 		panic(err)
 	}
+
+	fmt.Printf("settings are writen to %s\n", viper.ConfigFileUsed())
 }
 
 func setGlobalConfigFromViper() error {
@@ -143,7 +148,6 @@ func setGlobalConfigFromViper() error {
 	}
 	globalClient = redash.NewClient(conf.RedashEndPoint, conf.RedashUserAPIKey)
 	return nil
-
 }
 
 func enterValue() (string, error) {
