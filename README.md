@@ -9,7 +9,7 @@ This is beta version.
 ## Install
 ```
 # requirement: go version >= 1.16.0
-go install github.com/snowhork/rdiam
+go install github.com/snowhork/rdiam@latest
 ```
 
 ## Requirement
