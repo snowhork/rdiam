@@ -25,7 +25,7 @@ type responseSearchUser struct {
 func requestSearchUser(client redashClient, q string) (resp responseSearchUser, err error) {
 	raw, err := client.SearchUser(q)
 	if err != nil {
-		return resp, xerrors.Errorf("client.SearchUse: %+w", err)
+		return resp, xerrors.Errorf("client.SearchUser: %+w", err)
 	}
 
 	if err := json.Unmarshal(raw, &resp); err != nil {

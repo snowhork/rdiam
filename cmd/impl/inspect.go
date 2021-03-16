@@ -11,12 +11,12 @@ import (
 func InspectCmd(client redashClient, raw string) error {
 	u, err := url.Parse(raw)
 	if err != nil {
-		return xerrors.Errorf("url.Parse: %+w", err)
+		return xerrors.Errorf("unable to parse %s for url: %+w", raw, err)
 	}
 
 	path := strings.Split(u.Path, "/")
 	if len(path) < 3 {
-		return xerrors.Errorf("unable to inspect the path: %s", u.Path)
+		return xerrors.Errorf("unable to inspect the url: %s", raw)
 	}
 	resource, id := path[1], path[2]
 
