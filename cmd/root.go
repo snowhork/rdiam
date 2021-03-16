@@ -16,8 +16,14 @@ limitations under the License.
 package cmd
 
 import (
+	"bufio"
 	"fmt"
 	"os"
+	"strings"
+
+	"golang.org/x/xerrors"
+
+	"github.com/snowhork/rdiam/pkg/redash"
 
 	"github.com/mitchellh/go-homedir"
 
@@ -80,6 +86,7 @@ func initConfig() {
 
 		// Search config in home directory with name ".rdiam" (without extension).
 		viper.AddConfigPath(home)
+		viper.SetConfigType("yaml")
 		viper.SetConfigName(".rdiam")
 	}
 
@@ -87,6 +94,76 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
+		if err := setGlobalConfigFromViper(); err == nil {
+			fmt.Println("Using config file:", viper.ConfigFileUsed())
+			return
+		}
+
+		fmt.Println("Failed to use config file:", viper.ConfigFileUsed())
 	}
+
+	fmt.Print("Enter you Redash endpoint (e.g. https://redash.yourdomain.com): ")
+	redashEndpoint, err := enterValue()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	fmt.Printf("Enter your Redash user API Key (available at %s/users/me): ", redashEndpoint)
+	redashUserAPIKey, err := enterValue()
+	if err != nil {
+		panic(err)
+	}
+
+	viper.Set("RedashEndpoint", redashEndpoint)
+	viper.Set("RedashUserAPIKey", redashUserAPIKey)
+	if err := viper.WriteConfig(); err != nil {
+		if err := viper.SafeWriteConfig(); err != nil {
+			panic(err)
+		}
+	}
+
+	if err := viper.ReadInConfig(); err != nil {
+		panic(err)
+	}
+
+	if err := setGlobalConfigFromViper(); err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("settings are writen to %s\n", viper.ConfigFileUsed())
 }
+
+func setGlobalConfigFromViper() error {
+	conf := config{
+		RedashEndPoint:   strings.Trim(viper.Get("RedashEndpoint").(string), "/"),
+		RedashUserAPIKey: viper.Get("RedashUserAPIKEY").(string),
+	}
+
+	if conf.RedashEndPoint == "" {
+		return xerrors.New("RedashEndPoint is empty")
+	}
+	if conf.RedashUserAPIKey == "" {
+		return xerrors.New("RedashUserAPIKey is empty")
+	}
+	globalClient = redash.NewClient(conf.RedashEndPoint, conf.RedashUserAPIKey)
+	return nil
+}
+
+func enterValue() (string, error) {
+	reader := bufio.NewReader(os.Stdin)
+	res, err := reader.ReadString('\n')
+
+	if err != nil {
+		return "", nil
+	}
+
+	return strings.TrimSpace(res), nil
+}
+
+type config struct {
+	RedashEndPoint   string
+	RedashUserAPIKey string
+}
+
+var globalClient *redash.Client

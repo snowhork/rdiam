@@ -1,14 +1,12 @@
 package cmd
 
 import (
-	"os"
 	"strconv"
 
 	"github.com/spf13/cobra"
 	"golang.org/x/xerrors"
 
 	"github.com/snowhork/rdiam/cmd/impl"
-	"github.com/snowhork/rdiam/pkg/redash"
 )
 
 func init() {
@@ -58,14 +56,12 @@ rdiam inspect query 123`,
 }
 
 func runInspectQueryCmd(cmd *cobra.Command, args []string) error {
-	client := redash.NewClient(os.Getenv("REDASH_ENDPOINT"), os.Getenv("REDASH_API_KEY"))
-
 	queryID, err := strconv.Atoi(args[0])
 	if err != nil {
 		return xerrors.Errorf("queryID must be integer: %+w", err)
 	}
 
-	return impl.InspectQueryCmd(client, queryID, false)
+	return impl.InspectQueryCmd(globalClient, queryID, false)
 }
 
 func newInspectDataSourceCmd() *cobra.Command {
@@ -90,14 +86,12 @@ rdiam inspect datasource 12345`,
 }
 
 func runInspectDataSourceCmd(cmd *cobra.Command, args []string) error {
-	client := redash.NewClient(os.Getenv("REDASH_ENDPOINT"), os.Getenv("REDASH_API_KEY"))
-
 	dataSourceID, err := strconv.Atoi(args[0])
 	if err != nil {
 		return xerrors.Errorf("dataSourceID must be integer: %+w", err)
 	}
 
-	return impl.InspectDataSourceCmd(client, dataSourceID, false)
+	return impl.InspectDataSourceCmd(globalClient, dataSourceID, false)
 }
 
 func newInspectDashboardCmd() *cobra.Command {
@@ -122,8 +116,6 @@ rdiam inspect dashboard board-name`,
 }
 
 func runInspectDashboardCmd(cmd *cobra.Command, args []string) error {
-	client := redash.NewClient(os.Getenv("REDASH_ENDPOINT"), os.Getenv("REDASH_API_KEY"))
-
 	dashboardID := args[0]
-	return impl.InspectDashboardCmd(client, dashboardID, false)
+	return impl.InspectDashboardCmd(globalClient, dashboardID, false)
 }

@@ -12,16 +12,16 @@ import (
 	"golang.org/x/xerrors"
 )
 
-type client struct {
+type Client struct {
 	apiKey   string
 	endpoint string
 }
 
-func NewClient(endpoint, apiKey string) *client {
-	return &client{apiKey: apiKey, endpoint: endpoint}
+func NewClient(endpoint, apiKey string) *Client {
+	return &Client{apiKey: apiKey, endpoint: endpoint}
 }
 
-func (c *client) get(url string) ([]byte, error) {
+func (c *Client) get(url string) ([]byte, error) {
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, xerrors.Errorf("http.Get error: %+w", err)
@@ -39,7 +39,7 @@ func (c *client) get(url string) ([]byte, error) {
 	return body, nil
 }
 
-func (c *client) post(url string, req io.Reader) ([]byte, error) {
+func (c *Client) post(url string, req io.Reader) ([]byte, error) {
 	resp, err := http.Post(url, "application/json", req)
 	if err != nil {
 		return nil, xerrors.Errorf("http.Post error: %+w", err)
@@ -57,7 +57,7 @@ func (c *client) post(url string, req io.Reader) ([]byte, error) {
 	return body, nil
 }
 
-func (c *client) SearchUser(q string) ([]byte, error) {
+func (c *Client) SearchUser(q string) ([]byte, error) {
 	val := url.Values{}
 	val.Add("q", q)
 	val.Add("api_key", c.apiKey)
@@ -65,35 +65,35 @@ func (c *client) SearchUser(q string) ([]byte, error) {
 	return c.get(fmt.Sprintf("%s/api/users?%s", c.endpoint, val.Encode()))
 }
 
-func (c *client) GetGroups() ([]byte, error) {
+func (c *Client) GetGroups() ([]byte, error) {
 	val := url.Values{}
 	val.Add("api_key", c.apiKey)
 
 	return c.get(fmt.Sprintf("%s/api/groups?%s", c.endpoint, val.Encode()))
 }
 
-func (c *client) GetDataSource(id int) ([]byte, error) {
+func (c *Client) GetDataSource(id int) ([]byte, error) {
 	val := url.Values{}
 	val.Add("api_key", c.apiKey)
 
 	return c.get(fmt.Sprintf("%s/api/data_sources/%d?%s", c.endpoint, id, val.Encode()))
 }
 
-func (c *client) GetQuery(id int) ([]byte, error) {
+func (c *Client) GetQuery(id int) ([]byte, error) {
 	val := url.Values{}
 	val.Add("api_key", c.apiKey)
 
 	return c.get(fmt.Sprintf("%s/api/queries/%d?%s", c.endpoint, id, val.Encode()))
 }
 
-func (c *client) GetDashboard(id string) ([]byte, error) {
+func (c *Client) GetDashboard(id string) ([]byte, error) {
 	val := url.Values{}
 	val.Add("api_key", c.apiKey)
 
 	return c.get(fmt.Sprintf("%s/api/dashboards/%s?%s", c.endpoint, id, val.Encode()))
 }
 
-func (c *client) AddMember(groupID, userID int) ([]byte, error) {
+func (c *Client) AddMember(groupID, userID int) ([]byte, error) {
 	val := url.Values{}
 	val.Add("api_key", c.apiKey)
 

@@ -1,13 +1,10 @@
 package cmd
 
 import (
-	"os"
-
 	"github.com/spf13/cobra"
 	"golang.org/x/xerrors"
 
 	"github.com/snowhork/rdiam/cmd/impl"
-	"github.com/snowhork/rdiam/pkg/redash"
 )
 
 func init() {
@@ -48,7 +45,6 @@ func runAddCmd(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return xerrors.Errorf("failed to parse groups flag: %+w", err)
 	}
-	client := redash.NewClient(os.Getenv("REDASH_ENDPOINT"), os.Getenv("REDASH_API_KEY"))
 
-	return impl.AddCmd(client, users, groups)
+	return impl.AddCmd(globalClient, users, groups)
 }
