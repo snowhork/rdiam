@@ -1,6 +1,11 @@
 package cmd
 
 import (
+	"bufio"
+	"fmt"
+	"os"
+	"strings"
+
 	"github.com/spf13/cobra"
 	"golang.org/x/xerrors"
 
@@ -35,7 +40,7 @@ rdiam add -u user1@email.com,user2@email.com -g group1,group2`,
 	return cmd
 }
 
-func runAddCmd(cmd *cobra.Command, args []string) error {
+func runAddCmd(cmd *cobra.Command, _ []string) error {
 	users, err := cmd.Flags().GetStringSlice("users")
 	if err != nil {
 		return xerrors.Errorf("failed to parse users flag: %+w", err)
@@ -44,6 +49,18 @@ func runAddCmd(cmd *cobra.Command, args []string) error {
 	groups, err := cmd.Flags().GetStringSlice("groups")
 	if err != nil {
 		return xerrors.Errorf("failed to parse groups flag: %+w", err)
+	}
+
+	fmt.Printf("users:   %s\n", users)
+	fmt.Printf("groups:  %s\n", groups)
+	fmt.Printf("Are you sure? [y/n]")
+
+	reader := bufio.NewReader(os.Stdin)
+	res, err := reader.ReadString('\n')
+
+	if err != nil || strings.TrimSpace(res) != "y" {
+		fmt.Println("Abort.")
+		return nil
 	}
 
 	return impl.AddCmd(globalClient, users, groups)
