@@ -21,7 +21,7 @@ func Test_addCmd(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			err := addCmd(&mockClient{respSearchUser: []byte(respSearchUserJSON), respGetGroups: []byte(respGetGroupJSON)}, c.users, c.groups)
+			err := AddCmd(&mockClient{respSearchUser: []byte(respSearchUserJSON), respGetGroups: []byte(respGetGroupJSON)}, c.users, c.groups)
 			if c.valid {
 				assert.NoError(t, err)
 			} else {

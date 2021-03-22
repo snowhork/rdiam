@@ -1,31 +1,12 @@
 package impl
 
 import (
-	"bufio"
 	"fmt"
-	"os"
-	"strings"
 
 	"golang.org/x/xerrors"
 )
 
 func AddCmd(client redashClient, users, groups []string) error {
-	fmt.Printf("users:   %s\n", users)
-	fmt.Printf("groups:  %s\n", groups)
-	fmt.Printf("Are you sure? [y/n]")
-
-	reader := bufio.NewReader(os.Stdin)
-	res, err := reader.ReadString('\n')
-
-	if err != nil || strings.TrimSpace(res) != "y" {
-		fmt.Println("Abort.")
-		return nil
-	}
-
-	return addCmd(client, users, groups)
-}
-
-func addCmd(client redashClient, users, groups []string) error {
 	groupIds := make([]int, len(groups))
 	for i, g := range groups {
 		id, err := findGroupID(client, g)
