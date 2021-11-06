@@ -8,6 +8,18 @@ import (
 	"golang.org/x/xerrors"
 )
 
+type Options struct {
+	ShowQueryModifyPermission bool
+}
+
+var (
+	InspectOptions Options
+)
+
+func SetInspectOptions(options Options) {
+	InspectOptions = options
+}
+
 func InspectCmd(client redashClient, raw string) error {
 	u, err := url.Parse(raw)
 	if err != nil {

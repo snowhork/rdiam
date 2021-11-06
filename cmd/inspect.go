@@ -12,6 +12,10 @@ import (
 	"github.com/snowhork/rdiam/cmd/impl"
 )
 
+var (
+	o impl.Options
+)
+
 func init() {
 	rootCmd.AddCommand(newInspectCmd())
 }
@@ -42,10 +46,12 @@ func newInspectCmd() *cobra.Command {
 			} else {
 				arg = args[0]
 			}
+			impl.SetInspectOptions(o)
 
 			return impl.InspectCmd(globalClient, arg)
 		},
 	}
+	cmd.Flags().BoolVarP(&o.ShowQueryModifyPermission, "show-permission", "p", false, "Show query modify permission")
 
 	return cmd
 }

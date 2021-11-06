@@ -63,4 +63,10 @@ func buildQuery(client redashClient, groupMap groupIDToNameMap, queryID int) (q 
 func explainQuery(q query, indent int) {
 	fmt.Printf("%sID %d query is: %s\n", strings.Repeat("\t", indent), q.queryID, q.queryName)
 	explainDatasource(q.datasource, indent+1)
+	if InspectOptions.ShowQueryModifyPermission && len(q.queryACL) > 0 {
+		fmt.Printf("%sUsers with modify permission:\n", strings.Repeat("\t", indent+1))
+		for _, a := range q.queryACL {
+			fmt.Printf("%s* UserID: %d(%s)\n", strings.Repeat("\t", indent+2), a.userID, a.userName)
+		}
+	}
 }
