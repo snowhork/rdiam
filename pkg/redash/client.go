@@ -86,6 +86,13 @@ func (c *Client) GetQuery(id int) ([]byte, error) {
 	return c.get(fmt.Sprintf("%s/api/queries/%d?%s", c.endpoint, id, val.Encode()))
 }
 
+func (c *Client) GetQueryAcl(id int) ([]byte, error) {
+	val := url.Values{}
+	val.Add("api_key", c.apiKey)
+
+	return c.get(fmt.Sprintf("%s/api/queries/%d/acl?%s", c.endpoint, id, val.Encode()))
+}
+
 func (c *Client) GetDashboard(id string) ([]byte, error) {
 	val := url.Values{}
 	val.Add("api_key", c.apiKey)

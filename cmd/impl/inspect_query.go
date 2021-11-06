@@ -7,9 +7,15 @@ import (
 	"golang.org/x/xerrors"
 )
 
+type acl struct {
+	userID   int
+	userName string
+}
+
 type query struct {
 	queryName  string
 	queryID    int
+	queryACL   []acl
 	datasource datasource
 }
 
@@ -36,6 +42,14 @@ func buildQuery(client redashClient, groupMap groupIDToNameMap, queryID int) (q 
 
 	q.queryName = res.Name
 	q.queryID = res.ID
+
+	resAcl, err := requestGetQueryAcl(client, queryID)
+	if err != nil {
+		return q, xerrors.Errorf("requestGetQueryAcl: %+w", err)
+	}
+	for _, m := range resAcl.Modify {
+		q.queryACL = append(q.queryACL, acl{m.ID, m.Name})
+	}
 
 	ds, err := buildDatasource(client, groupMap, res.DataSourceID)
 	if err != nil {
