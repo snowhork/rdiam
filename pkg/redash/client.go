@@ -86,7 +86,7 @@ func (c *Client) GetQuery(id int) ([]byte, error) {
 	return c.get(fmt.Sprintf("%s/api/queries/%d?%s", c.endpoint, id, val.Encode()))
 }
 
-func (c *Client) GetQueryAcl(id int) ([]byte, error) {
+func (c *Client) GetQueryACL(id int) ([]byte, error) {
 	val := url.Values{}
 	val.Add("api_key", c.apiKey)
 

@@ -10,7 +10,7 @@ type redashClient interface {
 	SearchUser(q string) ([]byte, error)
 	GetGroups() ([]byte, error)
 	GetQuery(id int) ([]byte, error)
-	GetQueryAcl(id int) ([]byte, error)
+	GetQueryACL(id int) ([]byte, error)
 	GetDataSource(id int) ([]byte, error)
 	GetDashboard(id string) ([]byte, error)
 	AddMember(groupID, userID int) ([]byte, error)
@@ -73,15 +73,15 @@ func requestGetQuery(client redashClient, id int) (resp responseGetQuery, err er
 	return resp, nil
 }
 
-type responseGetQueryAcl struct {
+type responseGetQueryACL struct {
 	Modify []struct {
 		ID   int    `json:id`
 		Name string `json:name`
 	} `json:modify`
 }
 
-func requestGetQueryAcl(client redashClient, id int) (resp responseGetQueryAcl, err error) {
-	raw, err := client.GetQueryAcl(id)
+func requestGetQueryACL(client redashClient, id int) (resp responseGetQueryACL, err error) {
+	raw, err := client.GetQueryACL(id)
 	if err != nil {
 		return resp, xerrors.Errorf("client.SearchUse: %+w", err)
 	}

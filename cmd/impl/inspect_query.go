@@ -43,11 +43,11 @@ func buildQuery(client redashClient, groupMap groupIDToNameMap, queryID int) (q 
 	q.queryName = res.Name
 	q.queryID = res.ID
 
-	resAcl, err := requestGetQueryAcl(client, queryID)
+	resACL, err := requestGetQueryACL(client, queryID)
 	if err != nil {
-		return q, xerrors.Errorf("requestGetQueryAcl: %+w", err)
+		return q, xerrors.Errorf("requestGetQueryACL: %+w", err)
 	}
-	for _, m := range resAcl.Modify {
+	for _, m := range resACL.Modify {
 		q.queryACL = append(q.queryACL, acl{m.ID, m.Name})
 	}
 
