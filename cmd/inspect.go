@@ -46,9 +46,8 @@ func newInspectCmd() *cobra.Command {
 			} else {
 				arg = args[0]
 			}
-			impl.SetInspectOptions(o)
 
-			return impl.InspectCmd(globalClient, arg)
+			return impl.InspectCmd(globalClient, arg, o)
 		},
 	}
 	cmd.Flags().BoolVarP(&o.ShowQueryModifyPermission, "show-permission", "p", false, "Show query modify permission")

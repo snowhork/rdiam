@@ -13,7 +13,7 @@ type dashboard struct {
 	queries []query
 }
 
-func inspectDashboard(client redashClient, slug string) error {
+func inspectDashboard(client redashClient, slug string, o Options) error {
 	groupMap, err := buildGroupMap(client)
 	if err != nil {
 		return xerrors.Errorf("buildGroupMap: %+w", err)
@@ -24,7 +24,7 @@ func inspectDashboard(client redashClient, slug string) error {
 		return xerrors.Errorf("buildQuery: %+w", err)
 	}
 
-	explainDashboard(db, 0)
+	explainDashboard(db, 0, o)
 	return nil
 }
 
@@ -52,9 +52,9 @@ func buildDashboard(client redashClient, groupMap groupIDToNameMap, slug string)
 	return db, nil
 }
 
-func explainDashboard(db dashboard, indent int) {
+func explainDashboard(db dashboard, indent int, o Options) {
 	fmt.Printf("%sID %s dashboard is: %s\n", strings.Repeat("\t", indent), db.slug, db.name)
 	for _, q := range db.queries {
-		explainQuery(q, indent+1)
+		explainQuery(q, indent+1, o)
 	}
 }
