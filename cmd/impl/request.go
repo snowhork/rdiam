@@ -75,9 +75,9 @@ func requestGetQuery(client redashClient, id int) (resp responseGetQuery, err er
 
 type responseGetQueryACL struct {
 	Modify []struct {
-		ID   int    `json:id`
-		Name string `json:name`
-	} `json:modify`
+		ID   int    `json:"id"`
+		Name string `json:"name"`
+	} `json:"modify"`
 }
 
 func requestGetQueryACL(client redashClient, id int) (resp responseGetQueryACL, err error) {
