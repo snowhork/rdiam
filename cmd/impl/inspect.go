@@ -8,7 +8,11 @@ import (
 	"golang.org/x/xerrors"
 )
 
-func InspectCmd(client redashClient, raw string) error {
+type Options struct {
+	ShowQueryModifyPermission bool
+}
+
+func InspectCmd(client redashClient, raw string, o Options) error {
 	u, err := url.Parse(raw)
 	if err != nil {
 		return xerrors.Errorf("unable to parse %s for url: %+w", raw, err)
@@ -26,7 +30,7 @@ func InspectCmd(client redashClient, raw string) error {
 		if err != nil {
 			return xerrors.Errorf("query id must be integer: %+w", err)
 		}
-		return inspectQuery(client, qID)
+		return inspectQuery(client, qID, o)
 
 	case "data_sources":
 		dID, err := strconv.Atoi(id)
@@ -36,7 +40,7 @@ func InspectCmd(client redashClient, raw string) error {
 		return inspectDataSource(client, dID)
 
 	case "dashboard":
-		return inspectDashboard(client, id)
+		return inspectDashboard(client, id, o)
 	}
 	return xerrors.Errorf("unknown resource type: %s", resource)
 }

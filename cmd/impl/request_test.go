@@ -4,6 +4,7 @@ type mockClient struct {
 	respSearchUser,
 	respGetGroups,
 	respGetQuery,
+	respGetQueryACL,
 	respDataSource,
 	respDashboard,
 	respAddMember []byte
@@ -19,6 +20,10 @@ func (c *mockClient) GetGroups() ([]byte, error) {
 
 func (c *mockClient) GetQuery(id int) ([]byte, error) {
 	return c.respGetQuery, nil
+}
+
+func (c *mockClient) GetQueryACL(id int) ([]byte, error) {
+	return c.respGetQueryACL, nil
 }
 
 func (c *mockClient) GetDataSource(id int) ([]byte, error) {
