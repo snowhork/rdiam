@@ -3,7 +3,7 @@ package impl
 import (
 	"fmt"
 
-	"golang.org/x/xerrors"
+	"github.com/pkg/errors"
 )
 
 func AddCmd(client redashClient, users, groups []string) error {
@@ -11,7 +11,7 @@ func AddCmd(client redashClient, users, groups []string) error {
 	for i, g := range groups {
 		id, err := findGroupID(client, g)
 		if err != nil {
-			return xerrors.Errorf("findGroupID: %+w", err)
+			return errors.Wrap(err, "findGroupID")
 		}
 		groupIds[i] = id
 	}
@@ -20,7 +20,7 @@ func AddCmd(client redashClient, users, groups []string) error {
 	for i, u := range users {
 		id, err := findUserID(client, u)
 		if err != nil {
-			return xerrors.Errorf("findUserID: %+w", err)
+			return errors.Wrap(err, "findUserID")
 		}
 		userIds[i] = id
 	}
@@ -29,7 +29,7 @@ func AddCmd(client redashClient, users, groups []string) error {
 		for j, u := range userIds {
 			_, err := client.AddMember(g, u)
 			if err != nil {
-				return xerrors.Errorf("client.Addmember: %+w", err)
+				return errors.Wrap(err, "client.AddMember")
 			}
 
 			fmt.Printf("Added %s to %s\n", users[j], groups[i])
@@ -42,7 +42,7 @@ func AddCmd(client redashClient, users, groups []string) error {
 func findGroupID(client redashClient, groupName string) (int, error) {
 	resp, err := requestGetGroups(client)
 	if err != nil {
-		return -1, xerrors.Errorf("requestGetGroups: %+w", err)
+		return -1, errors.Wrap(err, "requestGetGroups")
 	}
 
 	for _, g := range resp {
@@ -51,22 +51,22 @@ func findGroupID(client redashClient, groupName string) (int, error) {
 		}
 	}
 
-	return -1, xerrors.Errorf("group: %s not found", groupName)
+	return -1, errors.Errorf("group: %q not found", groupName)
 }
 
 func findUserID(client redashClient, userEmail string) (int, error) {
 	resp, err := requestSearchUser(client, userEmail)
 	if err != nil {
-		return -1, xerrors.Errorf("requestSearchUser: %+w", err)
+		return -1, errors.Wrap(err, "requestSearchUser")
 	}
 
 	if len(resp.Results) == 0 {
-		return -1, xerrors.Errorf("user: %s not found", userEmail)
+		return -1, errors.Errorf("user: %q not found", userEmail)
 	}
 
 	user := resp.Results[0]
 	if user.Email != userEmail {
-		return -1, xerrors.Errorf("user: %s not found", userEmail)
+		return -1, errors.Errorf("user: %q not found", userEmail)
 	}
 
 	return user.ID, nil

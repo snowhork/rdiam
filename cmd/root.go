@@ -21,14 +21,12 @@ import (
 	"os"
 	"strings"
 
-	"golang.org/x/xerrors"
-
-	"github.com/snowhork/rdiam/pkg/redash"
-
 	"github.com/mitchellh/go-homedir"
-
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/snowhork/rdiam/pkg/redash"
 )
 
 var cfgFile string
@@ -52,7 +50,18 @@ to quickly create a Cobra application.`,
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
+		verbose, flagErr := rootCmd.Flags().GetBool("verbose")
+		if flagErr != nil {
+			fmt.Printf("failed to parse verbose flag %+v\n", flagErr)
+		}
+
+		if verbose {
+			if e, ok := err.(interface{ StackTrace() errors.StackTrace }); ok {
+				fmt.Printf("%s\n%+v\n", e, e.StackTrace())
+			} else {
+				fmt.Println("failed to get stack trace")
+			}
+		}
 		os.Exit(1)
 	}
 }
@@ -65,6 +74,7 @@ func init() {
 	// will be global for your application.
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.rdiam.yaml)")
+	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "print verbose log")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -141,10 +151,10 @@ func setGlobalConfigFromViper() error {
 	}
 
 	if conf.RedashEndPoint == "" {
-		return xerrors.New("RedashEndPoint is empty")
+		return errors.New("RedashEndPoint is empty")
 	}
 	if conf.RedashUserAPIKey == "" {
-		return xerrors.New("RedashUserAPIKey is empty")
+		return errors.New("RedashUserAPIKey is empty")
 	}
 	globalClient = redash.NewClient(conf.RedashEndPoint, conf.RedashUserAPIKey)
 	return nil

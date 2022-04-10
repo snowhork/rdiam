@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"golang.org/x/xerrors"
 
 	"github.com/snowhork/rdiam/cmd/impl"
 )
@@ -44,17 +44,17 @@ rdiam add -u user1@email.com,user2@email.com -g group1,group2`,
 func runAddCmd(cmd *cobra.Command, _ []string) error {
 	users, err := cmd.Flags().GetStringSlice("users")
 	if err != nil {
-		return xerrors.Errorf("failed to parse users flag: %+w", err)
+		return errors.Wrap(err, "parse users flag")
 	}
 
 	groups, err := cmd.Flags().GetStringSlice("groups")
 	if err != nil {
-		return xerrors.Errorf("failed to parse groups flag: %+w", err)
+		return errors.Wrap(err, "parse groups flag")
 	}
 
 	yes, err := cmd.Flags().GetBool("yes")
 	if err != nil {
-		return xerrors.Errorf("failed to parse yes flag: %+w", err)
+		return errors.Wrap(err, "parse yes flag")
 	}
 
 	fmt.Printf("users:   %s\n", users)

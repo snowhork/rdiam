@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"golang.org/x/xerrors"
+	"github.com/pkg/errors"
 )
 
 type dashboard struct {
@@ -16,12 +16,12 @@ type dashboard struct {
 func inspectDashboard(client redashClient, slug string, o Options) error {
 	groupMap, err := buildGroupMap(client)
 	if err != nil {
-		return xerrors.Errorf("buildGroupMap: %+w", err)
+		return errors.Wrap(err, "buildGroupMap")
 	}
 
 	db, err := buildDashboard(client, groupMap, slug)
 	if err != nil {
-		return xerrors.Errorf("buildQuery: %+w", err)
+		return errors.Wrap(err, "buildQuery")
 	}
 
 	explainDashboard(db, 0, o)
@@ -31,7 +31,7 @@ func inspectDashboard(client redashClient, slug string, o Options) error {
 func buildDashboard(client redashClient, groupMap groupIDToNameMap, slug string) (db dashboard, err error) {
 	res, err := requestGetDashboard(client, slug)
 	if err != nil {
-		return db, xerrors.Errorf("requestGetDashboard: %+w", err)
+		return db, errors.Wrap(err, "requestGetDashboard")
 	}
 
 	db.slug = res.Slug
@@ -44,7 +44,7 @@ func buildDashboard(client redashClient, groupMap groupIDToNameMap, slug string)
 
 		q, err := buildQuery(client, groupMap, w.Visualization.Query.ID)
 		if err != nil {
-			return db, xerrors.Errorf("buildQuery: %+w", err)
+			return db, errors.Wrap(err, "buildQuery")
 		}
 		db.queries = append(db.queries, q)
 	}

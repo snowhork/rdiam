@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"golang.org/x/xerrors"
+	"github.com/pkg/errors"
 )
 
 type acl struct {
@@ -22,12 +22,12 @@ type query struct {
 func inspectQuery(client redashClient, queryID int, o Options) error {
 	groupMap, err := buildGroupMap(client)
 	if err != nil {
-		return xerrors.Errorf("buildGroupMap: %+w", err)
+		return errors.Wrap(err, "buildGroupMap")
 	}
 
 	q, err := buildQuery(client, groupMap, queryID)
 	if err != nil {
-		return xerrors.Errorf("buildQuery: %+w", err)
+		return errors.Wrap(err, "buildQuery")
 	}
 
 	explainQuery(q, 0, o)
@@ -37,7 +37,7 @@ func inspectQuery(client redashClient, queryID int, o Options) error {
 func buildQuery(client redashClient, groupMap groupIDToNameMap, queryID int) (q query, err error) {
 	res, err := requestGetQuery(client, queryID)
 	if err != nil {
-		return q, xerrors.Errorf("requestGetQuery: %+w", err)
+		return q, errors.Wrap(err, "requestGetQuery")
 	}
 
 	q.queryName = res.Name
@@ -45,7 +45,7 @@ func buildQuery(client redashClient, groupMap groupIDToNameMap, queryID int) (q 
 
 	resACL, err := requestGetQueryACL(client, queryID)
 	if err != nil {
-		return q, xerrors.Errorf("requestGetQueryACL: %+w", err)
+		return q, errors.Wrap(err, "requestGetQueryACL")
 	}
 	for _, m := range resACL.Modify {
 		q.queryACL = append(q.queryACL, acl{m.ID, m.Name})
@@ -53,7 +53,7 @@ func buildQuery(client redashClient, groupMap groupIDToNameMap, queryID int) (q 
 
 	ds, err := buildDatasource(client, groupMap, res.DataSourceID)
 	if err != nil {
-		return q, xerrors.Errorf("buildDatasource: %+w", err)
+		return q, errors.Wrap(err, "buildDatasource")
 	}
 
 	q.datasource = ds

@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"golang.org/x/xerrors"
 
 	"github.com/snowhork/rdiam/cmd/impl"
 )
@@ -22,7 +22,7 @@ func newInspectCmd() *cobra.Command {
 		Short: "display required group for query or datasource or dashboard",
 		Args: func(cmd *cobra.Command, args []string) error {
 			if len(args) > 1 {
-				return xerrors.New("only 1 url must be specified")
+				return errors.New("only 1 url must be specified")
 			}
 			return nil
 		},
