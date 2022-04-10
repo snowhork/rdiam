@@ -29,6 +29,7 @@ rdiam add -u user1@email.com,user2@email.com -g group1,group2`,
 
 	cmd.Flags().StringSliceP("users", "u", []string{}, "Specify user email(s)")
 	cmd.Flags().StringSliceP("groups", "g", []string{}, "Specify group(s)")
+	cmd.Flags().BoolP("yes", "y", false, "Automatic yes to prompts")
 
 	if err := cmd.MarkFlagRequired("users"); err != nil {
 		panic(err)
@@ -51,16 +52,23 @@ func runAddCmd(cmd *cobra.Command, _ []string) error {
 		return xerrors.Errorf("failed to parse groups flag: %+w", err)
 	}
 
+	yes, err := cmd.Flags().GetBool("yes")
+	if err != nil {
+		return xerrors.Errorf("failed to parse yes flag: %+w", err)
+	}
+
 	fmt.Printf("users:   %s\n", users)
 	fmt.Printf("groups:  %s\n", groups)
-	fmt.Printf("Are you sure? [y/n]")
 
-	reader := bufio.NewReader(os.Stdin)
-	res, err := reader.ReadString('\n')
+	if !yes {
+		fmt.Printf("Are you sure? [y/n]")
+		reader := bufio.NewReader(os.Stdin)
+		res, err := reader.ReadString('\n')
 
-	if err != nil || strings.TrimSpace(res) != "y" {
-		fmt.Println("Abort.")
-		return nil
+		if err != nil || strings.TrimSpace(res) != "y" {
+			fmt.Println("Abort.")
+			return nil
+		}
 	}
 
 	return impl.AddCmd(globalClient, users, groups)
