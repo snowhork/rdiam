@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"golang.org/x/xerrors"
+	"github.com/pkg/errors"
 )
 
 type Options struct {
@@ -15,12 +15,12 @@ type Options struct {
 func InspectCmd(client redashClient, raw string, o Options) error {
 	u, err := url.Parse(raw)
 	if err != nil {
-		return xerrors.Errorf("unable to parse %s for url: %+w", raw, err)
+		return errors.Wrap(err, "url.Parse")
 	}
 
 	path := strings.Split(u.Path, "/")
 	if len(path) < 3 {
-		return xerrors.Errorf("unable to inspect the url: %s", raw)
+		return errors.Errorf("unable to inspect the url: %q", raw)
 	}
 	resource, id := path[1], path[2]
 
@@ -28,19 +28,19 @@ func InspectCmd(client redashClient, raw string, o Options) error {
 	case "queries":
 		qID, err := strconv.Atoi(id)
 		if err != nil {
-			return xerrors.Errorf("query id must be integer: %+w", err)
+			return errors.Wrap(err, "query id must be integer")
 		}
 		return inspectQuery(client, qID, o)
 
 	case "data_sources":
 		dID, err := strconv.Atoi(id)
 		if err != nil {
-			return xerrors.Errorf("data_sourcerid must be integer: %+w", err)
+			return errors.Wrap(err, "data_source id must be integer")
 		}
 		return inspectDataSource(client, dID)
 
 	case "dashboard":
 		return inspectDashboard(client, id, o)
 	}
-	return xerrors.Errorf("unknown resource type: %s", resource)
+	return errors.Errorf("unknown resource type: %q", resource)
 }

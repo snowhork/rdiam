@@ -5,11 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 
-	"golang.org/x/xerrors"
+	"github.com/pkg/errors"
 )
 
 type Client struct {
@@ -24,16 +23,16 @@ func NewClient(endpoint, apiKey string) *Client {
 func (c *Client) get(url string) ([]byte, error) {
 	resp, err := http.Get(url)
 	if err != nil {
-		return nil, xerrors.Errorf("http.Get error: %+w", err)
+		return nil, errors.Wrap(err, "http.Get error")
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, xerrors.Errorf("ioutil.ReadAll: %+w", err)
+		return nil, errors.Wrap(err, "io.ReadAll")
 	}
 
 	if resp.StatusCode != 200 {
-		return nil, xerrors.Errorf("unexpected status code: %d", resp.StatusCode)
+		return nil, errors.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 
 	return body, nil
@@ -42,16 +41,16 @@ func (c *Client) get(url string) ([]byte, error) {
 func (c *Client) post(url string, req io.Reader) ([]byte, error) {
 	resp, err := http.Post(url, "application/json", req)
 	if err != nil {
-		return nil, xerrors.Errorf("http.Post error: %+w", err)
+		return nil, errors.Wrap(err, "http.Post error")
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, xerrors.Errorf("ioutil.ReadAll: %+w", err)
+		return nil, errors.Wrap(err, "io.ReadAll")
 	}
 
 	if resp.StatusCode != 200 {
-		return nil, xerrors.Errorf("unexpected status code: %d", resp.StatusCode)
+		return nil, errors.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 
 	return body, nil
@@ -110,7 +109,7 @@ func (c *Client) AddMember(groupID, userID int) ([]byte, error) {
 
 	raw, err := json.Marshal(body)
 	if err != nil {
-		return nil, xerrors.Errorf("json.Marshal: %+w", err)
+		return nil, errors.Wrap(err, "json.Marshal")
 	}
 
 	return c.post(fmt.Sprintf("%s/api/groups/%d/members?%s", c.endpoint, groupID, val.Encode()), bytes.NewBuffer(raw))

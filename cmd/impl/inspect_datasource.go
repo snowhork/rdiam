@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"golang.org/x/xerrors"
+	"github.com/pkg/errors"
 )
 
 type datasource struct {
@@ -30,7 +30,7 @@ type groupIDToNameMap map[int]string
 func buildGroupMap(client redashClient) (groupIDToNameMap, error) {
 	resp, err := requestGetGroups(client)
 	if err != nil {
-		return nil, xerrors.Errorf("request: %+w", err)
+		return nil, errors.Wrap(err, "requestGetGroups")
 	}
 
 	res := groupIDToNameMap{}
@@ -44,12 +44,12 @@ func buildGroupMap(client redashClient) (groupIDToNameMap, error) {
 func inspectDataSource(client redashClient, dataSourceID int) error {
 	groupMap, err := buildGroupMap(client)
 	if err != nil {
-		return xerrors.Errorf("buildGroupMap: %+w", err)
+		return errors.Wrap(err, "buildGroupMap")
 	}
 
 	ds, err := buildDatasource(client, groupMap, dataSourceID)
 	if err != nil {
-		return xerrors.Errorf("buildDatasource: %+w", err)
+		return errors.Wrap(err, "buildDatasource")
 	}
 
 	explainDatasource(ds, 0)
@@ -59,7 +59,7 @@ func inspectDataSource(client redashClient, dataSourceID int) error {
 func buildDatasource(client redashClient, groupMap groupIDToNameMap, id int) (ds datasource, err error) {
 	res, err := requestGetDataSource(client, id)
 	if err != nil {
-		return ds, xerrors.Errorf("request: %+w", err)
+		return ds, errors.Wrap(err, "requestGetDataSource")
 	}
 
 	ds.name = res.Name
@@ -68,21 +68,21 @@ func buildDatasource(client redashClient, groupMap groupIDToNameMap, id int) (ds
 	for groupID, readonly := range res.Groups {
 		gID, err := strconv.Atoi(groupID)
 		if err != nil {
-			return ds, xerrors.Errorf("strconv.Atoi: %+w", err)
+			return ds, errors.Wrap(err, "strconv.Atoi")
 		}
 
-		group := group{
+		g := group{
 			name: groupMap[gID],
 			id:   gID,
 		}
 
 		if readonly {
-			group.role = groupRoleReadonly
+			g.role = groupRoleReadonly
 		} else {
-			group.role = groupRoleFullAccess
+			g.role = groupRoleFullAccess
 		}
 
-		ds.groups = append(ds.groups, group)
+		ds.groups = append(ds.groups, g)
 	}
 
 	return ds, nil
