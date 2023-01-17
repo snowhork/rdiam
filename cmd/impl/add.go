@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/pkg/errors"
+	"go.uber.org/multierr"
 )
 
 func AddCmd(client redashClient, users, groups []string) error {
@@ -17,12 +18,18 @@ func AddCmd(client redashClient, users, groups []string) error {
 	}
 
 	userIds := make([]int, len(users))
+	var errs []error
 	for i, u := range users {
 		id, err := findUserID(client, u)
 		if err != nil {
-			return errors.Wrap(err, "findUserID")
+			errs = append(errs, errors.Wrap(err, "findUserID"))
+			continue
 		}
 		userIds[i] = id
+	}
+
+	if len(errs) > 0 {
+		return multierr.Combine(errs...)
 	}
 
 	for i, g := range groupIds {
